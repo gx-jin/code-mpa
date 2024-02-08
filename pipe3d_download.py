@@ -1,13 +1,13 @@
 import os
-# from astropy.io import fits
+import shutil
+import requests
+from astropy.io import fits
 # import numpy as np
 # from astropy.io import ascii
 # from astropy import units as u
 # from astropy.coordinates import SkyCoord
 # from astropy import constants as const
 # from astropy.cosmology import FlatLambdaCDM
-import requests
-import shutil
 
 
 def download_pipe3d(plate, ifudesign,
@@ -38,3 +38,11 @@ def download_pipe3d(plate, ifudesign,
                         shutil.copyfileobj(r.raw, f)
             if not quiet:
                 print(f"File downloaded: {save_loc}")
+
+
+hdu = fits.open('/afs/mpa/temp/gxjin/pipe3d/SDSS17Pipe3D_v3_1_1.fits')
+plate = hdu[1].data['plate']
+ifu = hdu[1].data['ifudsgn']
+hdu.close()
+for i in range(len(plate)):
+    download_pipe3d(plate[i], ifu[i], save_dir='/afs/mpa/temp/gxjin/pipe3d', quiet=True, )
