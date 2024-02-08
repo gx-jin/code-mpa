@@ -25,7 +25,7 @@ def download_pipe3d(plate, ifudesign,
     if not os.path.exists(save_dir):
         raise RuntimeError("No such directory: " + str(save_dir))
     else:
-        save_loc = f'{save_dir}/{plate}/manga-{plate}-{ifudesign}-Pipe3D.cube.fits.gz'
+        save_loc = f'{save_dir}/manga-{plate}-{ifudesign}-Pipe3D.cube.fits.gz'
         if os.path.exists(save_loc):
             if ~quiet:
                 print('File existed')
