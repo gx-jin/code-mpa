@@ -2,6 +2,7 @@ import os
 import shutil
 import requests
 from astropy.io import fits
+from tqdm import trange
 # import numpy as np
 # from astropy.io import ascii
 # from astropy import units as u
@@ -29,7 +30,7 @@ def download_pipe3d(plate, ifudesign,
             if ~quiet:
                 print('File existed')
         else:
-            logcube_url = f'https://data.sdss.org/sas/dr17/manga/spectro/pipe3d/v3_1_1/3.1.1/{plate}/manga-{plate}-{ifudesign}-Pipe3D.cube.fits.gz'
+            logcube_url = f'https://data.sdss.org/sas/dr17/manga/spectro/pipe3d/v3_1_1/3.1.1/{plate}/manga-{plate}-{ifudesign}.Pipe3D.cube.fits.gz'
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; \
                 rv:80.0) Gecko/20100101 Firefox/80.0'}
             with requests.get(logcube_url, headers=headers, stream=True, timeout=600) as r:
@@ -44,5 +45,5 @@ hdu = fits.open('/afs/mpa/temp/gxjin/pipe3d/SDSS17Pipe3D_v3_1_1.fits')
 plate = hdu[1].data['plate']
 ifu = hdu[1].data['ifudsgn']
 hdu.close()
-for i in range(len(plate)):
+for i in trange(len(plate)):
     download_pipe3d(plate[i], ifu[i], save_dir='/afs/mpa/temp/gxjin/pipe3d', quiet=True, )
