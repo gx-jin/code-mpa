@@ -78,7 +78,7 @@ def download_rms(fid, save_dir):
                     shutil.copyfileobj(r.raw, f)
             
         
-for i in tqdm(range(1)): #len(ra_dap)
+for i in tqdm(range(len(ra_dap))): #len(ra_dap)
     fidtmp = dr3field[i].decode('utf-8')
     if fidtmp == 'NOCOVERAGE':
         continue
