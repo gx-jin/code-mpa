@@ -59,9 +59,7 @@ for i in range(len(ra_dap)):
 
 def download_mosaic(fid, save_dir):
     save_loc = save_dir+fid+'_high_mosaic.fits'
-    if os.path.exists(save_loc):
-        return
-    else:
+    if not os.path.exists(save_loc):
         url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
         with requests.get(url, headers=headers, stream=True, timeout=540,
                           auth = HTTPBasicAuth('surveys', '150megahertz')) as r:
@@ -69,11 +67,9 @@ def download_mosaic(fid, save_dir):
                 with open(save_loc, 'wb') as f:
                     shutil.copyfileobj(r.raw, f)
                     
-def download_rms(fid, save_loc):
-    savefile = save_loc+fid+'_rms.fits'
-    if os.path.exists(savefile):
-        return
-    else:
+def download_rms(fid, save_dir):
+    save_loc = save_dir+fid+'_rms.fits'
+    if not os.path.exists(save_loc):
         url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
         with requests.get(url, headers=headers, stream=True, timeout=540,
                           auth = HTTPBasicAuth('surveys', '150megahertz')) as r:
