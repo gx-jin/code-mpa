@@ -47,7 +47,7 @@ dr3field = np.zeros_like(ra_dap, dtype='S11')
 dap_skycoo = SkyCoord(ra_dap, dec_dap, frame='icrs', unit='deg')
 field_skycoo = SkyCoord(ra_dr3, dec_dr3, frame='icrs', unit='deg')
 
-for i in tqdm(range(len(ra_dap))):
+for i in range(len(ra_dap)):
     septmp = dap_skycoo[i].separation(field_skycoo).deg
     if np.min(septmp) < mosiac_size:
         dr3field[i] = fieldid[septmp == np.min(septmp)][0]
@@ -57,9 +57,9 @@ for i in tqdm(range(len(ra_dap))):
         print('Warning')
 
 
-def download_mosaic(fid, save_loc):
-    savefile = save_loc+fid+'_high_mosaic.fits'
-    if os.path.exists(savefile):
+def download_mosaic(fid, save_dir):
+    save_loc = save_dir+fid+'_high_mosaic.fits'
+    if os.path.exists(save_loc):
         return
     else:
         url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
