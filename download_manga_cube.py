@@ -50,7 +50,7 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
         ifu = hdu[1].data['IFUDESIGN']
         dapdone = hdu[1].data['DAPDONE']
         for i in tqdm(range(len(plate))):  
-            save_loc = f'{save_dir}/manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
+            save_loc = f'{save_dir}manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
             if os.path.exists(save_loc):
                 continue
             elif dapdone[i]:
@@ -63,8 +63,8 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
                             shutil.copyfileobj(r.raw, f)
 
 
-dapall_dir = '/afs/mpa/home/gxjin/gxjin_mpa/dapall-v3_1_1-3.1.0_spx.fits'
-save_dir = '/afs/mpa/temp/gxjin/DAP11_LOGCUBE_SPX'
+dapall_dir = '/afs/mpa/home/gxjin/code-mpa/data/dapall-v3_1_1-3.1.0_spx.fits'
+save_dir = '/afs/mpa/temp/gxjin/DAP11_LOGCUBE_SPX/'
 download_cube(dapall=dapall_dir, save_dir=save_dir, daptype='SPX', test=False)
 
 # todo: check how many files, etc.

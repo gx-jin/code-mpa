@@ -35,7 +35,7 @@ def download_maps(dapall='?', save_dir='?',
         plate = hdu[1].data['PLATE']
         ifu = hdu[1].data['IFUDESIGN']
         i = 3 
-        save_loc = f'{save_dir}/manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
+        save_loc = f'{save_dir}manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
         if not os.path.exists(save_loc):
             maps_url = f'https://data.sdss.org/sas/dr17/manga/spectro/analysis/v3_1_1/3.1.0/{daptype}-MILESHC-MASTARSSP/{plate[i]}/{ifu[i]}/manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; \
@@ -63,8 +63,8 @@ def download_maps(dapall='?', save_dir='?',
                             shutil.copyfileobj(r.raw, f)
 
 
-dapall_dir = '/afs/mpa/home/gxjin/gxjin_mpa/dapall-v3_1_1-3.1.0_vor10.fits'
-save_dir = '/afs/mpa/temp/gxjin/DAP11_MAPS_VOR10'
+dapall_dir = '/afs/mpa/home/gxjin/code-mpa/data/dapall-v3_1_1-3.1.0_vor10.fits'
+save_dir = '/afs/mpa/temp/gxjin/DAP11_MAPS_VOR10/'
 download_maps(dapall=dapall_dir, save_dir=save_dir, daptype='VOR10', test=False)
 
 # todo: check how many files, etc.

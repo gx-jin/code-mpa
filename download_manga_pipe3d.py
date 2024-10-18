@@ -18,8 +18,8 @@
 """
 
 import os
-import requests
 import shutil
+import requests
 from astropy.io import fits
 from tqdm import tqdm
 
@@ -34,10 +34,11 @@ def download_pipe3d(allfile='?', save_dir='?', test=False):
         plate = hdu[1].data['plate']
         ifu = hdu[1].data['ifudsgn']
         i = 3
-        save_loc = f'{save_dir}/manga-{plate[i]}-{ifu[i]}.Pipe3D.cube.fits.gz'
+        save_loc = f'{save_dir}manga-{plate[i]}-{ifu[i]}.Pipe3D.cube.fits.gz'
 
         maps_url = f'https://data.sdss.org/sas/dr17/manga/spectro/pipe3d/v3_1_1/3.1.1/{plate[i]}/manga-{plate[i]}-{ifu[i]}.Pipe3D.cube.fits.gz'
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64;rv:80.0) Gecko/20100101 Firefox/80.0'}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; \
+                    rv:80.0) Gecko/20100101 Firefox/80.0'}
         with requests.get(maps_url, headers=headers, stream=True) as r:
             if r.status_code == requests.codes.ok:
                 with open(save_loc, 'wb') as f:
@@ -60,8 +61,8 @@ def download_pipe3d(allfile='?', save_dir='?', test=False):
                             shutil.copyfileobj(r.raw, f)
 
 
-allfile_dir = '/afs/mpa/home/gxjin/gxjin_mpa/SDSS17Pipe3D_v3_1_1_part.fits'
-save_dir = '/afs/mpa/temp/gxjin/PIPE3D'
+allfile_dir = '/afs/mpa/home/gxjin/code-mpa/data/SDSS17Pipe3D_v3_1_1_part.fits'
+save_dir = '/afs/mpa/temp/gxjin/PIPE3D/'
 
 # allfile_dir = 'E:\OneDrive\Code\manga\SDSS17Pipe3D_v3_1_1_part.fits'
 # save_dir = 'E:\OneDrive\Code\manga'
