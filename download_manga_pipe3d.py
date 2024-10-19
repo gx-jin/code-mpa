@@ -62,7 +62,7 @@ def download_pipe3d(allfile='?', save_dir='?', test=False):
 
 
 allfile_dir = '/afs/mpa/home/gxjin/code-mpa/data/SDSS17Pipe3D_v3_1_1_part.fits'
-save_dir = '/afs/mpa/temp/gxjin/PIPE3D/'
+save_dir = '/afs/mpa/project/sdss/manga/dap_v311/PIPE3D/'
 
 # allfile_dir = 'E:\OneDrive\Code\manga\SDSS17Pipe3D_v3_1_1_part.fits'
 # save_dir = 'E:\OneDrive\Code\manga'

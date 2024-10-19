@@ -64,7 +64,7 @@ def download_maps(dapall='?', save_dir='?',
 
 
 dapall_dir = '/afs/mpa/home/gxjin/code-mpa/data/dapall-v3_1_1-3.1.0_vor10.fits'
-save_dir = '/afs/mpa/temp/gxjin/DAP11_MAPS_VOR10/'
+save_dir = '/afs/mpa/project/sdss/manga/dap_v311/DAP11_MAPS_VOR10/'
 download_maps(dapall=dapall_dir, save_dir=save_dir, daptype='VOR10', test=False)
 
 # todo: check how many files, etc.
