@@ -23,11 +23,49 @@ from astropy.coordinates import SkyCoord
 from tqdm import tqdm
 from requests.auth import HTTPBasicAuth
 import shutil
-
-
 import requests
-headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; \
-            x64; rv:80.0) Gecko/20100101 Firefox/80.0'}
+from requests.auth import HTTPBasicAuth
+
+def download(url: str, local_filename: str,
+             username='None', password='None',
+             quiet=True):
+    
+    headers = {'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0'}
+    
+    # Check parent directory
+    parent_directory = os.path.dirname(local_filename)
+    if not os.path.isdir(os.path.dirname(local_filename)):
+        print(f"The parent directory '{parent_directory}' does not exist")
+        return
+    
+    # Check if file exists
+    if os.path.exists(local_filename) & (not quiet):
+        print(f"File exists: '{local_filename}'")
+        return
+    
+    # Try download
+    try:
+        response = requests.head(url, 
+                                 headers=headers, stream=True, timeout=540,
+                                 auth = HTTPBasicAuth(username, password))
+        if response.status_code == requests.codes.ok:
+            with requests.get(url,
+                              headers=headers, stream=True, timeout=540,
+                              auth = HTTPBasicAuth(username, password)) as r:
+                r.raise_for_status()
+                with open(local_filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            if not quiet:
+                print(f"File '{local_filename}' downloaded")
+            return        
+        else:
+            print(f'HTTP error occurred: {response.status_code}')
+    except requests.RequestException:
+        print('Invalid url')
 
 
 dr3df = pd.read_html('/afs/mpa/home/gxjin/code-mpa/data/dr3list_241018.html')[0]
@@ -56,27 +94,15 @@ for i in range(len(ra_dap)):
     else:
         print('Warning')
 
-
 def download_mosaic(fid, save_dir):
     save_loc = save_dir+fid+'_high_mosaic.fits'
-    if not os.path.exists(save_loc):
-        url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
-        with requests.get(url, headers=headers, stream=True, timeout=540,
-                          auth = HTTPBasicAuth('surveys', '150megahertz')) as r:
-            if r.status_code == requests.codes.ok:
-                with open(save_loc, 'wb') as f:
-                    shutil.copyfileobj(r.raw, f)
+    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
+    download(url, save_loc)
                     
 def download_rms(fid, save_dir):
     save_loc = save_dir+fid+'_rms.fits'
-    if not os.path.exists(save_loc):
-        url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
-        with requests.get(url, headers=headers, stream=True, timeout=540,
-                          auth = HTTPBasicAuth('surveys', '150megahertz')) as r:
-            if r.status_code == requests.codes.ok:
-                with open(save_loc, 'wb') as f:
-                    shutil.copyfileobj(r.raw, f)
-            
+    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
+    download(url, save_loc)
         
 for i in tqdm(range(len(ra_dap))): #len(ra_dap)
     fidtmp = dr3field[i].decode('utf-8')
@@ -86,5 +112,3 @@ for i in tqdm(range(len(ra_dap))): #len(ra_dap)
         download_mosaic(fidtmp, '/afs/mpa/temp/gxjin/LOTSS3/')
         download_rms(fidtmp, '/afs/mpa/temp/gxjin/LOTSS3/')
         
-
-# # todo: check how many files, etc.
