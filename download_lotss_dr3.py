@@ -95,18 +95,26 @@ for i in range(len(ra_dap)):
 def download_mosaic(fid, save_dir):
     save_loc = save_dir+fid+'_high_mosaic.fits'
     url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
-    download(url, save_loc, username='surveys', password='150megahertz', quiet=False)
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
                     
 def download_rms(fid, save_dir):
     save_loc = save_dir+fid+'_rms.fits'
     url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
-    download(url, save_loc, username='surveys', password='150megahertz', quiet=False)
-        
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
+
+save_dir = '/afs/mpa/temp/gxjin/LOTSS3/'
 for i in tqdm(range(len(ra_dap))): #len(ra_dap)
     fidtmp = dr3field[i].decode('utf-8')
     if fidtmp == 'NOCOVERAGE':
         continue
     else:
-        download_mosaic(fidtmp, '/afs/mpa/temp/gxjin/LOTSS3/')
-        download_rms(fidtmp, '/afs/mpa/temp/gxjin/LOTSS3/')
-        
+        download_mosaic(fidtmp, save_dir)
+        download_rms(fidtmp, save_dir)
+        if not os.path.exists(save_dir+fidtmp+'_high_mosaic.fits'):
+            download(f'https://lofar-surveys.org/downloads/DR2/mosaics/{fidtmp}/mosaic-blanked.fits',
+                        save_dir+fidtmp+'_high_mosaic.fits',
+                        username='surveys', password='150megahertz', quiet=True)
+        if not os.path.exists(save_dir+fidtmp+'_rms.fits'):
+            download(f'https://lofar-surveys.org/downloads/DR2/mosaics/{fidtmp}/mosaic.rms.fits',
+                        save_dir+fidtmp+'_rms.fits',
+                        username='surveys', password='150megahertz', quiet=True)    
