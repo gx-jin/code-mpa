@@ -50,7 +50,7 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
         ifu = hdu[1].data['IFUDESIGN']
         dapdone = hdu[1].data['DAPDONE']
         for i in tqdm(range(len(plate))):  
-            save_loc = f'{save_dir}manga-{plate[i]}-{ifu[i]}-MAPS-{daptype}-MILESHC-MASTARSSP.fits.gz'
+            save_loc = f'{save_dir}manga-{plate[i]}-{ifu[i]}-LOGCUBE-{daptype}-MILESHC-MASTARSSP.fits.gz'
             if os.path.exists(save_loc):
                 continue
             elif dapdone[i]:
