@@ -19,12 +19,54 @@
 
 
 import os
-import shutil
 import requests
 from astropy.io import fits
 from tqdm import tqdm
+from requests.auth import HTTPBasicAuth
 
 
+def download(url: str, local_filename: str,
+             username='None', password='None',
+             quiet=True):
+    
+    headers = {'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+            AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0'}
+    
+    # Check parent directory
+    parent_directory = os.path.dirname(local_filename)
+    if not os.path.isdir(os.path.dirname(local_filename)):
+        print(f"The parent directory '{parent_directory}' does not exist")
+        return
+    
+    # Check if file exists
+    if os.path.exists(local_filename) & (not quiet):
+        print(f"File exists: '{local_filename}'")
+        return
+    
+    # Try download
+    try:
+        response = requests.head(url, 
+                                 headers=headers, stream=True, timeout=540,
+                                 auth = HTTPBasicAuth(username, password))
+        if response.status_code == requests.codes.ok:
+            with requests.get(url,
+                              headers=headers, stream=True, timeout=540,
+                              auth = HTTPBasicAuth(username, password)) as r:
+                r.raise_for_status()
+                with open(local_filename, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            if not quiet:
+                print(f"File '{local_filename}' downloaded")
+            return        
+        else:
+            print(f'HTTP error {response.status_code}: {url}')
+    except requests.RequestException:
+        print('Invalid url')
+        
+        
 def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
     if not os.path.exists(dapall):
         raise RuntimeError("No such directory: " + str(dapall))
@@ -36,14 +78,9 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
         ifu = hdu[1].data['IFUDESIGN']
         i = 3 
         save_loc = f'{save_dir}/manga-{plate[i]}-{ifu[i]}-LOGCUBE-{daptype}-MILESHC-MASTARSSP.fits.gz'
-        if not os.path.exists(save_loc):
-            maps_url = f'https://data.sdss.org/sas/dr17/manga/spectro/analysis/v3_1_1/3.1.0/{daptype}-MILESHC-MASTARSSP/{plate[i]}/{ifu[i]}/manga-{plate[i]}-{ifu[i]}-LOGCUBE-{daptype}-MILESHC-MASTARSSP.fits.gz'
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; \
-                rv:80.0) Gecko/20100101 Firefox/80.0'}
-            with requests.get(maps_url, headers=headers, stream=True) as r:
-                if r.status_code == requests.codes.ok:
-                    with open(save_loc, 'wb') as f:
-                        shutil.copyfileobj(r.raw, f)
+        maps_url = f'https://data.sdss.org/sas/dr17/manga/spectro/analysis/v3_1_1/3.1.0/{daptype}-MILESHC-MASTARSSP/{plate[i]}/{ifu[i]}/manga-{plate[i]}-{ifu[i]}-LOGCUBE-{daptype}-MILESHC-MASTARSSP.fits.gz'
+        download(maps_url, save_loc, quiet=True)
+        
     else:
         hdu = fits.open(dapall)
         plate = hdu[1].data['PLATE']
@@ -55,13 +92,7 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
                 continue
             elif dapdone[i]:
                 maps_url = f'https://data.sdss.org/sas/dr17/manga/spectro/analysis/v3_1_1/3.1.0/{daptype}-MILESHC-MASTARSSP/{plate[i]}/{ifu[i]}/manga-{plate[i]}-{ifu[i]}-LOGCUBE-{daptype}-MILESHC-MASTARSSP.fits.gz'
-                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; \
-                    rv:80.0) Gecko/20100101 Firefox/80.0'}
-                with requests.get(maps_url, headers=headers, stream=True) as r:
-                    if r.status_code == requests.codes.ok:
-                        with open(save_loc, 'wb') as f:
-                            shutil.copyfileobj(r.raw, f)
-
+                download(maps_url, save_loc, quiet=True)
 
 dapall_dir = '/afs/mpa/home/gxjin/code-mpa/data/dapall-v3_1_1-3.1.0_spx.fits'
 save_dir = '/afs/mpa/project/sdss/manga/dap_v311/DAP11_LOGCUBE_SPX/'

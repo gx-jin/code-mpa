@@ -22,9 +22,7 @@ from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from tqdm import tqdm
 from requests.auth import HTTPBasicAuth
-import shutil
 import requests
-from requests.auth import HTTPBasicAuth
 
 def download(url: str, local_filename: str,
              username='None', password='None',
