@@ -41,8 +41,9 @@ def download(url: str, local_filename: str,
         return
     
     # Check if file exists
-    if os.path.exists(local_filename) & (not quiet):
-        print(f"File exists: '{local_filename}'")
+    if os.path.exists(local_filename):
+        if not quiet:
+            print(f"File exists: '{local_filename}'")
         return
     
     # Try download
