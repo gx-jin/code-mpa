@@ -97,12 +97,12 @@ for i in range(len(ra_dap)):
 def download_mosaic(fid, save_dir):
     save_loc = save_dir+fid+'_high_mosaic.fits'
     url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
-    download(url, save_loc, username='surveys', password='150megahertz')
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=False)
                     
 def download_rms(fid, save_dir):
     save_loc = save_dir+fid+'_rms.fits'
     url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
-    download(url, save_loc, username='surveys', password='150megahertz')
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=False)
         
 for i in tqdm(range(len(ra_dap))): #len(ra_dap)
     fidtmp = dr3field[i].decode('utf-8')
