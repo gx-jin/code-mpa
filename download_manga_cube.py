@@ -64,7 +64,7 @@ def download_cube(dapall='?', save_dir='?', daptype='SPX', test=False):
 
 
 dapall_dir = '/afs/mpa/home/gxjin/code-mpa/data/dapall-v3_1_1-3.1.0_spx.fits'
-save_dir = '/afs/mpa/temp/gxjin/DAP11_LOGCUBE_SPX/'
+save_dir = '/afs/mpa/project/sdss/manga/dap_v311/DAP11_LOGCUBE_SPX/'
 download_cube(dapall=dapall_dir, save_dir=save_dir, daptype='SPX', test=False)
 
 # todo: check how many files, etc.
