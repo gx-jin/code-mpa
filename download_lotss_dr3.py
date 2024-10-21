@@ -67,7 +67,7 @@ def download(url: str, local_filename: str,
         print('Invalid url')
 
 
-dr3df = pd.read_html('/afs/mpa/home/gxjin/code-mpa/data/dr3list_241018.html')[0]
+dr3df = pd.read_html('/afs/mpa/home/gxjin/code-mpa/data/dr3list_241021.html')[0]
 
 fieldid = dr3df['Field name'].to_numpy()
 ra_dr3 = dr3df['RA'].to_numpy()
