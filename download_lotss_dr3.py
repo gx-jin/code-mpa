@@ -100,7 +100,7 @@ field_skycoo = SkyCoord(ra_dr3, dec_dr3, frame='icrs', unit='deg')
 
 save_dir = '/afs/mpa/temp/gxjin/LOTSS3/'
 
-for i in range(len(ra_dap)):
+for i in tqdm(range(len(ra_dap))):
     septmp = dap_skycoo[i].separation(field_skycoo).deg
     if np.min(septmp) < mosiac_size:
         fidtmp = fieldid[septmp == np.min(septmp)][0]
