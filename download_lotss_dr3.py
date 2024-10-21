@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    Check and download all the LoTSS DR3 images and rms images which
-    contain the MaNGA galaxies.
+    Check and download all the LoTSS DR3 images, rms maps, 
+    and source catalog which contain the MaNGA galaxies.
     
     Copyright (C) 2019-2024, Gaoxiang Jin
 
@@ -66,6 +66,20 @@ def download(url: str, local_filename: str,
     except requests.RequestException:
         print('Invalid url')
 
+def download_img(fid, save_dir):
+    save_loc = save_dir+fid+'_high_mosaic.fits'
+    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
+                    
+def download_rms(fid, save_dir):
+    save_loc = save_dir+fid+'_rms.fits'
+    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
+    
+def download_cat(fid, save_dir):
+    save_loc = save_dir+fid+'_cat.fits'
+    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.srl.fits'
+    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
 
 dr3df = pd.read_html('/afs/mpa/home/gxjin/code-mpa/data/dr3list_241021.html')[0]
 
@@ -79,43 +93,23 @@ ra_dap = cat_dap['OBJRA'].data
 dec_dap = cat_dap['OBJDEC'].data
 
 mosiac_size = 2.2#1.917 # assuming mosiac size = 1.917 deg
-dr3field = np.zeros_like(ra_dap, dtype='S11')
+dr3field = []
 
 dap_skycoo = SkyCoord(ra_dap, dec_dap, frame='icrs', unit='deg')
 field_skycoo = SkyCoord(ra_dr3, dec_dr3, frame='icrs', unit='deg')
 
+save_dir = '/afs/mpa/temp/gxjin/LOTSS3/'
+
 for i in range(len(ra_dap)):
     septmp = dap_skycoo[i].separation(field_skycoo).deg
     if np.min(septmp) < mosiac_size:
-        dr3field[i] = fieldid[septmp == np.min(septmp)][0]
+        fidtmp = fieldid[septmp == np.min(septmp)][0]
+        dr3field.append(fidtmp)
+        download_img(fidtmp, save_dir)
+        download_rms(fidtmp, save_dir)
+        download_cat(fidtmp, save_dir)
+        
     elif np.min(septmp) >= mosiac_size:
-        dr3field[i] = 'NOCOVERAGE'
+        dr3field.append('NOCOVERAGE')
     else:
         print('Warning')
-
-def download_mosaic(fid, save_dir):
-    save_loc = save_dir+fid+'_high_mosaic.fits'
-    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked.fits'
-    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
-                    
-def download_rms(fid, save_dir):
-    save_loc = save_dir+fid+'_rms.fits'
-    url = f'https://lofar-surveys.org/downloads/DR3/mosaics/{fid}/mosaic-blanked--final.rms.fits'
-    download(url, save_loc, username='surveys', password='150megahertz', quiet=True)
-
-save_dir = '/afs/mpa/temp/gxjin/LOTSS3/'
-for i in tqdm(range(len(ra_dap))): #len(ra_dap)
-    fidtmp = dr3field[i].decode('utf-8')
-    if fidtmp == 'NOCOVERAGE':
-        continue
-    else:
-        download_mosaic(fidtmp, save_dir)
-        download_rms(fidtmp, save_dir)
-        if not os.path.exists(save_dir+fidtmp+'_high_mosaic.fits'):
-            download(f'https://lofar-surveys.org/downloads/DR2/mosaics/{fidtmp}/mosaic-blanked.fits',
-                        save_dir+fidtmp+'_high_mosaic.fits',
-                        username='surveys', password='150megahertz', quiet=True)
-        if not os.path.exists(save_dir+fidtmp+'_rms.fits'):
-            download(f'https://lofar-surveys.org/downloads/DR2/mosaics/{fidtmp}/mosaic.rms.fits',
-                        save_dir+fidtmp+'_rms.fits',
-                        username='surveys', password='150megahertz', quiet=True)    
