@@ -62,7 +62,8 @@ def download(url: str, local_filename: str,
                 print(f"File '{local_filename}' downloaded")
             return        
         else:
-            print(f'HTTP error {response.status_code}: {url}')
+            if not quiet:
+                print(f'HTTP error {response.status_code}: {url}')
     except requests.RequestException:
         print('Invalid url')
 
